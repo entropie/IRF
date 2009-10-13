@@ -31,7 +31,7 @@ module IRF
     end
 
     def policy(which)
-      @custom_policies || ResizePolicies[which]
+      @custom_policies and @custom_policies[which] or ResizePolicies[which]
     end
     
     def start(*policies)
