@@ -9,7 +9,7 @@ require "RMagick"
 module IRF
   class ImageResizeFacility
 
-    attr_accessor :policy
+    attr_accessor :policy, :bads
 
     ResizePolicies = {
       :default => proc{
@@ -17,7 +17,7 @@ module IRF
       },
       :medium => proc{
         if width > 1000 or size > 750
-          scale!(0.50)
+          scale!(0.35)
         elsif width > 500 or size > 500
           scale!(0.25)
         end
@@ -25,6 +25,7 @@ module IRF
     }
     
     def initialize(opts = {}, &blk)
+      @bads = []
       @custom_policies = opts[:policies]
       instance_eval(&blk)
     end
@@ -36,10 +37,20 @@ module IRF
     def start(*policies)
       spool.each do |img|
         policies.each do |policy|
-          new_img = Image.new(img)
-          new_img.facility = self
-          new_img.resize(policy)
+          begin
+            new_img = Image.new(img)
+            new_img.facility = self
+            new_img.resize(policy)
+          rescue Magick::ImageMagickError
+            bads << img
+          end
         end
+      end
+      if bads.size > 0
+        puts "Bad Files list:\n"
+        bads.each{|b|
+          puts b
+        }          
       end
     end
     
