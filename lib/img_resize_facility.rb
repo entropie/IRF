@@ -7,6 +7,11 @@ require "ftools"
 require "RMagick"
 
 module IRF
+
+  # Example
+  #  IRF::ImageResizeFacility.new(){
+  #   recursive_resize("/Users/mit/facrez_tmp")
+  #  }.start(:default, :medium)
   class ImageResizeFacility
 
     attr_accessor :policy, :bads
