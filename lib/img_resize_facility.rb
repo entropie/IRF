@@ -17,15 +17,11 @@ module IRF
     attr_accessor :policy, :bads
 
     ResizePolicies = {
-      :default => proc{
-        crop_resized!(48, 48, Magick::NorthGravity)
+      :thumbnail => proc{
+        crop_resized!(48, 48)
       },
       :medium => proc{
-        if width > 1000 or size > 750
-          scale!(0.35)
-        elsif width > 500 or size > 500
-          scale!(0.25)
-        end
+        resize_to_fill!(320)
       }
     }
     
@@ -108,10 +104,12 @@ module IRF
       to = File.dirname(path.path) << "/%s_#{name}"
       filename =
         case pol
-        when :default
+        when :thumbnail
           to % "thumb"
         when :medium
           to % "medium"
+        else
+          to % pol.to_s
         end
     end
 
