@@ -4,7 +4,7 @@
 #
 require "rubygems"
 require "ftools"
-require "RMagick"
+gem "RMagick"
 
 module IRF
 
@@ -95,8 +95,8 @@ module IRF
     
     def initialize(path)
       self.path = File.new(path)
-      self._image = Magick::Image.read(path).first
-      self.image = Magick::ImageList.new(path)
+      self.image = Magick::Image.read(path).first
+      raise Magick::ImageMagickError, "image is nil" unless image
     end
 
     def filename_for(pol)
