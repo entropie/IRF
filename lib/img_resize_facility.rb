@@ -4,16 +4,21 @@
 #
 require "rubygems"
 require "ftools"
-gem "RMagick"
+require "rmagick"
+
+require File.join(File.dirname(File.expand_path(__FILE__)), 'irf.rb')
 
 module IRF
-
+  
+  
   # Example
   #  IRF::ImageResizeFacility.new(){
   #   recursive_resize("/Users/mit/facrez_tmp")
-  #  }.start(:default, :medium)
+  #  }.start(:thumbnail, :medium)
   class ImageResizeFacility
 
+    include ReadDir
+    
     attr_accessor :policy, :bads
 
     ResizePolicies = {
@@ -57,18 +62,6 @@ module IRF
     
     def spool
       @spool ||= []
-    end
-    
-    def read_dir(dir, &blk)
-      Dir.chdir(dir){
-        Dir["*"].each do |folder|
-          unless File.directory?(folder)
-            yield File.expand_path(folder)
-          else
-            read_dir(folder, &blk)
-          end
-        end
-      }
     end
     
     def recursive_resize(dir)
