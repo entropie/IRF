@@ -9,13 +9,17 @@ require "haml/exec"
 
 require File.join(File.dirname(File.expand_path(__FILE__)), 'irf.rb')
 
+class Haml::Exec::Generic
+  def exit(n); end
+end
+
 module IRF
 
   class Hamlizer
 
     include ReadDir
 
-    attr_reader :spool
+    attr_reader :spool, :opts
 
     def spool
       @spool ||= []
@@ -37,7 +41,7 @@ module IRF
 
     def filename_for(file)
       ret = file.dup.gsub(/\.haml$/, ".html")
-      ret.gsub!(/\.css$/, ".css")
+      ret.gsub!(/\.sass$/, ".css")
       ret
     end
 
@@ -56,15 +60,14 @@ module IRF
 
 
     def start
-      spool.each do |file|
-        puts " #{File.basename(file)} -> #{filename_for(file)}"
+      @spool.each do |file|
+        puts " #{ "%20s" % File.basename(file)} -> #{filename_for(file)}" unless opts[:quiet]
         class_for(file).parse!
       end
     end
   end
   
 end
-
 
 =begin
 Local Variables:
